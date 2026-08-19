@@ -87,10 +87,10 @@ button { font-family: inherit; color: inherit; }
   to   { opacity: 1; transform: none; }
 }
 
-.mark { width: min(150px, 38vw); margin: 0 auto 22px; filter: drop-shadow(0 12px 24px rgba(0,0,0,.5)); }
+.mark { width: min(158px, 40vw); margin: 0 auto 22px; filter: drop-shadow(0 12px 24px rgba(0,0,0,.5)); }
 .mark svg { width: 100%; height: auto; display: block; }
 .mark__pendulum {
-  transform-origin: 60px 120px;
+  transform-origin: 60px 114px;
   animation: swing 1.5s cubic-bezier(.45,0,.55,1) infinite alternate;
 }
 @keyframes swing {

@@ -23,34 +23,39 @@
 
   <div class="splash__inner">
     <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 120 140" role="img">
+      <svg viewBox="0 0 120 150" role="img">
         <defs>
-          <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#2a2f3a"/>
-            <stop offset="100%" stop-color="#161a21"/>
+          <linearGradient id="bodyGrad" gradientUnits="userSpaceOnUse" x1="20" y1="10" x2="100" y2="140">
+            <stop offset="0%" stop-color="#39414f"/>
+            <stop offset="100%" stop-color="#222932"/>
           </linearGradient>
-          <linearGradient id="accGrad" gradientUnits="userSpaceOnUse" x1="44" y1="26" x2="78" y2="120">
-            <stop offset="0%" stop-color="#ffcf6b"/>
-            <stop offset="100%" stop-color="#ff8a3d"/>
+          <linearGradient id="accGrad" gradientUnits="userSpaceOnUse" x1="44" y1="20" x2="80" y2="120">
+            <stop offset="0%" stop-color="#ffd685"/>
+            <stop offset="100%" stop-color="#ff7a2f"/>
           </linearGradient>
         </defs>
-        <!-- metronome body -->
-        <path d="M60 6 L104 128 a6 6 0 0 1-6 8 H22 a6 6 0 0 1-6-8 Z"
-              fill="url(#bodyGrad)" stroke="#39404e" stroke-width="2" stroke-linejoin="round"/>
-        <path d="M60 20 L96 122 H24 Z" fill="#0e1116" opacity=".55"/>
-        <!-- scale ticks -->
-        <g stroke="#4a5262" stroke-width="2" stroke-linecap="round">
-          <line x1="52" y1="46" x2="68" y2="46"/>
-          <line x1="49" y1="64" x2="71" y2="64"/>
-          <line x1="46" y1="82" x2="74" y2="82"/>
-          <line x1="43" y1="100" x2="77" y2="100"/>
+        <!-- body -->
+        <path d="M53 14 Q60 5 67 14 L98 116 H22 Z" fill="url(#bodyGrad)"/>
+        <rect x="15" y="114" width="90" height="20" rx="7" fill="#2c333f"/>
+        <rect x="24" y="132" width="14" height="7" rx="3" fill="#1a1f27"/>
+        <rect x="82" y="132" width="14" height="7" rx="3" fill="#1a1f27"/>
+        <!-- inner panel -->
+        <path d="M56 26 Q60 20 64 26 L88 110 H32 Z" fill="#12161c"/>
+        <!-- scale -->
+        <g stroke="#5b6579" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+          <line x1="54" y1="40" x2="62" y2="40"/>
+          <line x1="53" y1="50" x2="61" y2="50"/>
+          <line x1="52" y1="60" x2="62" y2="60"/>
+          <line x1="51" y1="70" x2="61" y2="70"/>
+          <line x1="50" y1="80" x2="62" y2="80"/>
+          <line x1="49" y1="90" x2="61" y2="90"/>
+          <line x1="48" y1="100" x2="62" y2="100"/>
         </g>
         <!-- pendulum -->
         <g class="mark__pendulum">
-          <line x1="60" y1="118" x2="60" y2="26" stroke="url(#accGrad)" stroke-width="5" stroke-linecap="round"/>
-          <rect x="49" y="52" width="22" height="13" rx="3" fill="url(#accGrad)"/>
+          <line x1="60" y1="112" x2="60" y2="22" stroke="url(#accGrad)" stroke-width="4.5" stroke-linecap="round"/>
+          <rect x="50" y="46" width="20" height="12" rx="3.5" fill="url(#accGrad)"/>
         </g>
-        <circle cx="60" cy="120" r="7" fill="#1d222b" stroke="#4a5262" stroke-width="2"/>
       </svg>
     </div>
 

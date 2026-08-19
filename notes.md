@@ -84,3 +84,15 @@ session's egress policy blocks `api.openai.com` (the agent proxy answers 403 to 
 so the artwork is hand-authored SVG rasterised through headless Chromium instead. That is
 arguably the better outcome here: the icon is vector, matches the in-app mark exactly, and
 the whole icon set is ~50 KB.
+
+### Step 5 — Generated app icon (OpenAI `gpt-image-2`)
+Egress to `api.openai.com` was opened up, so the installed-app icon is now generated with
+`gpt-image-2` (1024², high quality): a dark, glowing metronome in the app's amber palette.
+Post-processing with Pillow trims the generated black margin and produces `icon-512.png`,
+`icon-192.png`, `apple-touch-icon.png` (180 px) and a padded `icon-maskable-512.png` for
+Android's adaptive-icon safe zone.
+
+The in-app artwork stays vector: the title-screen mark was redrawn to match the generated
+icon's silhouette (rounded-top body, plinth, inner panel, amber pendulum) so the launcher
+icon and the splash read as the same object — but as SVG it stays crisp at any size and its
+pendulum actually swings. `icons/icon.svg` (favicon + manifest SVG entry) was redrawn to match.

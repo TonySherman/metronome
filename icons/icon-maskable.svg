@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#20262f"/><stop offset="100%" stop-color="#0b0d11"/>
+      <stop offset="0%" stop-color="#1c222b"/><stop offset="100%" stop-color="#0b0d11"/>
     </linearGradient>
-    <linearGradient id="acc" gradientUnits="userSpaceOnUse" x1="200" y1="110" x2="320" y2="390">
+    <linearGradient id="body" gradientUnits="userSpaceOnUse" x1="90" y1="60" x2="420" y2="470">
+      <stop offset="0%" stop-color="#39414f"/><stop offset="100%" stop-color="#222932"/>
+    </linearGradient>
+    <linearGradient id="acc" gradientUnits="userSpaceOnUse" x1="190" y1="90" x2="330" y2="420">
       <stop offset="0%" stop-color="#ffd685"/><stop offset="100%" stop-color="#ff7a2f"/>
     </linearGradient>
-    <linearGradient id="body" gradientUnits="userSpaceOnUse" x1="256" y1="80" x2="256" y2="420">
-      <stop offset="0%" stop-color="#232a35"/><stop offset="100%" stop-color="#12161c"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.5">
-      <stop offset="0%" stop-color="#ffb648" stop-opacity=".28"/>
+    <radialGradient id="glow" cx="0.5" cy="0.45" r="0.52">
+      <stop offset="0%" stop-color="#ffb648" stop-opacity=".30"/>
       <stop offset="100%" stop-color="#ffb648" stop-opacity="0"/>
     </radialGradient>
   </defs>
@@ -18,22 +18,21 @@
   <rect width="512" height="512" fill="url(#bg)"/>
   <rect width="512" height="512" fill="url(#glow)"/>
 
-  <g transform="translate(256 256) scale(0.72) translate(-256 -256)">
-  <path d="M256 74 L378 402 a16 16 0 0 1-15 21 H149 a16 16 0 0 1-15-21 Z"
-        fill="url(#body)" stroke="#454e5e" stroke-width="11" stroke-linejoin="round"/>
+  <g transform="translate(256 256) scale(0.74) translate(-256 -256)">
+  <path d="M228 72 Q256 40 284 72 L406 400 H106 Z" fill="url(#body)"/>
+  <rect x="80" y="394" width="352" height="66" rx="24" fill="#2c333f"/>
+  <path d="M240 108 Q256 88 272 108 L364 384 H148 Z" fill="#12161c"/>
 
-  <g stroke="#5b6579" stroke-width="10" stroke-linecap="round" opacity=".85">
-    <line x1="240" y1="196" x2="272" y2="196"/>
-    <line x1="232" y1="248" x2="280" y2="248"/>
-    <line x1="224" y1="300" x2="288" y2="300"/>
+  <g stroke="#5b6579" stroke-width="7" stroke-linecap="round" opacity=".8">
+    <line x1="232" y1="160" x2="268" y2="160"/>
+    <line x1="226" y1="204" x2="266" y2="204"/>
+    <line x1="220" y1="248" x2="266" y2="248"/>
+    <line x1="214" y1="292" x2="264" y2="292"/>
   </g>
 
-  <g transform="rotate(15 256 380)">
-    <line x1="256" y1="380" x2="256" y2="124" stroke="url(#acc)" stroke-width="17" stroke-linecap="round"/>
-    <rect x="225" y="196" width="62" height="34" rx="9" fill="url(#acc)"/>
-    <rect x="225" y="196" width="62" height="34" rx="9" fill="none" stroke="#ffe0aa" stroke-opacity=".45" stroke-width="2"/>
+  <g transform="rotate(13 256 392)">
+    <line x1="256" y1="392" x2="256" y2="96" stroke="url(#acc)" stroke-width="18" stroke-linecap="round"/>
+    <rect x="222" y="180" width="68" height="38" rx="11" fill="url(#acc)"/>
   </g>
-
-  <circle cx="256" cy="380" r="19" fill="#151a21" stroke="#5b6579" stroke-width="10"/>
   </g>
 </svg>
