@@ -133,3 +133,19 @@ is a broken metronome), so sizing is now driven by the viewport *height* as well
   them. Subdivision clicks now also blink the active beat dot.
 - Offline verified end-to-end: with the network cut, a reload still boots the full app from
   the service-worker cache.
+
+### Step 8 — Tests, README, final polish
+- `tests/timing.js` and `tests/e2e.js` are checked in (Playwright + a static server; see
+  `tests/README.md`). The e2e run drives the title screen, ± buttons, tap tempo, dial drag,
+  accent cycling, meter presets, transport + spacebar, the settings sheet, persistence
+  across a reload and the count-in — 20 assertions, all passing, no console errors.
+- **Behaviour fix found by the tests:** tapping a normal beat used to mute it; the cycle is
+  now normal → accent → mute → normal, since accenting is the far more common intent.
+- Tap-tempo test compares against the intervals *actually* achieved rather than the nominal
+  ones — driving clicks through a browser adds tens of ms, which looked like a metronome bug
+  at first and wasn't (138 BPM read against 138.5 BPM tapped).
+- `README.md` rewritten as the project front page: feature list, how the scheduler works,
+  file map, keyboard shortcuts.
+- Dropped the unused subdivision-dot CSS and a no-op line in the beat renderer; corrected an
+  engine comment that claimed `noteValue` rescaled the beat length (it doesn't — the tempo
+  counts the denominator note, like a hardware metronome).

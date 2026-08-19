@@ -159,8 +159,8 @@
     const btn = e.target.closest('.beat');
     if (!btn) return;
     const i = +btn.dataset.index;
-    // accent → normal → mute → accent
-    const order = [2, 1, 0];
+    // normal → accent → mute → normal
+    const order = [1, 2, 0];
     const next = order[(order.indexOf(metro.accents[i]) + 1) % order.length];
     metro.accents[i] = next;
     btn.dataset.level = next;
