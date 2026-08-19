@@ -29,3 +29,24 @@ Design decisions so far:
 - Visual beat display, count-in, bar counter
 - Tempo trainer (auto speed-up) and bar muting for practice
 - Persisted settings, screen wake lock, offline service worker
+
+### Step 2 — Metronome engine + core UI
+- `js/audio.js` — the engine.
+  - **Scheduling:** a 25 ms `setInterval` "ticker" schedules every click that falls in the
+    next 120 ms directly on the Web Audio clock. JS timers only decide *when to schedule*,
+    never *when to sound*, so timing stays sample-accurate even when the main thread stutters.
+  - **Sounds are synthesised** (noise bursts + filtered oscillators), so there are no audio
+    files to download: 8 voices — Click, Woodblock, Beep, Mechanical, Cowbell, Rimshot,
+    Hi-hat, Marimba. One recipe per voice is reused for accent / normal / subdivision by
+    scaling gain and pitch.
+  - Supports beats-per-bar, note value, subdivisions (1–4), swing, per-beat accent levels
+    (accent / normal / mute), count-in, tempo trainer and silent-bar practice.
+  - A queue of `(audioTime → beat)` entries lets the UI redraw in `requestAnimationFrame`
+    exactly in sync with what you hear.
+- `js/app.js` — UI layer: circular tempo dial (drag to change tempo), ± buttons with
+  press-and-hold repeat, slider, tap tempo, beat dots you tap to cycle accent → normal →
+  mute, time-signature stepper, subdivision + swing segmented control, play/stop,
+  keyboard shortcuts (space, arrows, T), screen wake lock, settings persisted to
+  `localStorage`, Italian tempo markings.
+- Fix: the tempo arc is set with `element.style.strokeDasharray`, not `setAttribute` — a
+  CSS rule for the same property outranks a presentation attribute, so the arc never drew.

@@ -67,11 +67,106 @@
   </div>
 </section>
 
-<!-- ───────────── App shell (built out next) ───────────── -->
+<!-- ───────────── App ───────────── -->
 <main id="app" class="app" hidden>
-  <p class="placeholder">Metronome loading…</p>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__dot" aria-hidden="true"></span>
+      <span class="brand__name">Pulse</span>
+    </div>
+    <div class="counter" id="counter" aria-live="off">
+      <span class="counter__label">Bar</span>
+      <span class="counter__value" id="barCount">–</span>
+    </div>
+    <button class="icon-btn" id="sheetBtn" type="button" aria-label="Sound &amp; practice settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h4M12 12h8M4 17h8M16 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="16" cy="7" r="2.4" fill="currentColor"/><circle cx="10" cy="12" r="2.4" fill="currentColor"/><circle cx="14" cy="17" r="2.4" fill="currentColor"/></svg>
+    </button>
+  </header>
+
+  <!-- Tempo dial -->
+  <section class="dial-wrap">
+    <div class="dial" id="dial" role="slider" tabindex="0"
+         aria-label="Tempo in beats per minute" aria-valuemin="20" aria-valuemax="300" aria-valuenow="100">
+      <svg class="dial__svg" viewBox="0 0 240 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffcf6b"/>
+            <stop offset="100%" stop-color="#ff8a3d"/>
+          </linearGradient>
+        </defs>
+        <g id="dialTicks" class="dial__ticks"></g>
+        <circle class="dial__track" cx="120" cy="120" r="98"/>
+        <circle class="dial__arc" id="dialArc" cx="120" cy="120" r="98"/>
+        <circle class="dial__knob" id="dialKnob" cx="120" cy="22" r="7"/>
+      </svg>
+      <div class="dial__pulse" id="dialPulse" aria-hidden="true"></div>
+      <div class="dial__center">
+        <div class="bpm" id="bpmValue">100</div>
+        <div class="bpm__unit">BPM</div>
+        <div class="tempo-name" id="tempoName">Andante</div>
+      </div>
+    </div>
+
+    <div class="nudge">
+      <button class="nudge__btn" id="bpmDown" type="button" aria-label="Decrease tempo">−</button>
+      <input class="slider" id="bpmSlider" type="range" min="20" max="300" step="1" value="100" aria-label="Tempo slider">
+      <button class="nudge__btn" id="bpmUp" type="button" aria-label="Increase tempo">+</button>
+    </div>
+  </section>
+
+  <!-- Beats: tap a dot to cycle accent → normal → mute -->
+  <section class="beats-wrap">
+    <div class="beats" id="beats" aria-label="Beats in the bar. Tap a beat to change its accent."></div>
+    <p class="hint" id="beatHint">Tap a beat to accent or mute it</p>
+  </section>
+
+  <!-- Transport -->
+  <section class="transport">
+    <button class="round-btn" id="tapBtn" type="button">
+      <span class="round-btn__main">TAP</span>
+      <span class="round-btn__sub" id="tapSub">tempo</span>
+    </button>
+
+    <button class="play-btn" id="playBtn" type="button" aria-label="Start metronome">
+      <svg class="play-btn__icon play-btn__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+      <svg class="play-btn__icon play-btn__icon--stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>
+    </button>
+
+    <button class="round-btn" id="subBtn" type="button" aria-pressed="true">
+      <span class="round-btn__main" id="subGlyph">♩</span>
+      <span class="round-btn__sub">subdiv</span>
+    </button>
+  </section>
+
+  <!-- Meter + subdivision -->
+  <section class="panel">
+    <div class="row">
+      <span class="row__label">Time signature</span>
+      <div class="stepper" id="meterStepper">
+        <button class="stepper__btn" id="beatsDown" type="button" aria-label="Fewer beats per bar">−</button>
+        <span class="stepper__value"><span id="beatsValue">4</span><span class="stepper__slash">/</span><span id="noteValue">4</span></span>
+        <button class="stepper__btn" id="beatsUp" type="button" aria-label="More beats per bar">+</button>
+        <button class="stepper__note" id="noteToggle" type="button" aria-label="Change note value">♩=beat</button>
+      </div>
+    </div>
+
+    <div class="row row--stack">
+      <span class="row__label">Subdivision</span>
+      <div class="segmented" id="subSeg" role="group" aria-label="Subdivision">
+        <button data-sub="1" class="seg is-on" type="button"><span class="seg__glyph">♩</span><span class="seg__cap">1</span></button>
+        <button data-sub="2" class="seg" type="button"><span class="seg__glyph">♫</span><span class="seg__cap">2</span></button>
+        <button data-sub="3" class="seg" type="button"><span class="seg__glyph">♪♪♪</span><span class="seg__cap">3</span></button>
+        <button data-sub="4" class="seg" type="button"><span class="seg__glyph">♬</span><span class="seg__cap">4</span></button>
+        <button data-swing="1" id="swingBtn" class="seg seg--wide" type="button"><span class="seg__glyph">swing</span><span class="seg__cap" id="swingCap">off</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="pad"></div>
 </main>
 
+<script src="js/audio.js" defer></script>
 <script src="js/app.js" defer></script>
 </body>
 </html>
