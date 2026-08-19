@@ -1,0 +1,164 @@
+/* ============================================================
+   Pulse — Metronome
+   Design tokens
+   ============================================================ */
+:root {
+  --bg:        #0d0f13;
+  --bg-2:      #14181f;
+  --surface:   #171c24;
+  --surface-2: #1e242e;
+  --line:      #2a313d;
+  --text:      #eef1f6;
+  --muted:     #9aa4b5;
+  --accent:    #ffb648;
+  --accent-2:  #ff8a3d;
+  --accent-ink:#20160a;
+  --beat:      #6ee7ff;
+  --danger:    #ff6b6b;
+
+  --radius:    18px;
+  --radius-sm: 12px;
+  --shadow:    0 10px 30px rgba(0,0,0,.45);
+
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+
+  --font: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  overscroll-behavior: none;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+button { font-family: inherit; color: inherit; }
+
+/* ============================================================
+   Title screen
+   ============================================================ */
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: calc(24px + var(--safe-t)) 24px calc(24px + var(--safe-b));
+  background:
+    radial-gradient(120% 80% at 50% 0%, #1a2029 0%, var(--bg) 62%);
+  z-index: 50;
+  transition: opacity .45s ease, transform .45s ease;
+}
+.splash.is-hiding { opacity: 0; transform: scale(1.04); pointer-events: none; }
+
+.splash__glow {
+  position: absolute;
+  top: -18%;
+  left: 50%;
+  width: min(560px, 120vw);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(255,182,72,.16) 0%, rgba(255,138,61,0) 65%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.splash__inner {
+  position: relative;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  animation: rise .6s cubic-bezier(.2,.8,.3,1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.mark { width: min(150px, 38vw); margin: 0 auto 22px; filter: drop-shadow(0 12px 24px rgba(0,0,0,.5)); }
+.mark svg { width: 100%; height: auto; display: block; }
+.mark__pendulum {
+  transform-origin: 60px 120px;
+  animation: swing 1.5s cubic-bezier(.45,0,.55,1) infinite alternate;
+}
+@keyframes swing {
+  from { transform: rotate(-17deg); }
+  to   { transform: rotate(17deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mark__pendulum { animation: none; }
+}
+
+.splash__title {
+  margin: 0;
+  font-size: clamp(44px, 13vw, 62px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #fff 20%, #ffd79a 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.splash__tagline {
+  margin: 10px 0 30px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.btn-start {
+  appearance: none;
+  border: 0;
+  width: 100%;
+  max-width: 320px;
+  padding: 17px 24px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+  box-shadow: 0 10px 24px rgba(255,138,61,.28), inset 0 1px 0 rgba(255,255,255,.35);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.btn-start:active { transform: translateY(2px) scale(.985); box-shadow: 0 6px 14px rgba(255,138,61,.22); }
+
+.splash__features {
+  list-style: none;
+  margin: 30px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.splash__features li { display: flex; gap: 10px; justify-content: center; align-items: center; }
+.splash__features li::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+/* ============================================================
+   App shell (placeholder for now)
+   ============================================================ */
+.app {
+  min-height: 100%;
+  padding: calc(16px + var(--safe-t)) 16px calc(16px + var(--safe-b));
+}
+.placeholder { color: var(--muted); text-align: center; margin-top: 40vh; }

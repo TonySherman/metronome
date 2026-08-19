@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Pulse — Metronome</title>
+<meta name="description" content="A clean, accurate metronome for practicing music. Tap tempo, subdivisions, accents and a tempo trainer.">
+<meta name="theme-color" content="#0d0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pulse">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ───────────── Title screen ───────────── -->
+<section id="splash" class="splash" aria-label="Welcome">
+  <div class="splash__glow" aria-hidden="true"></div>
+
+  <div class="splash__inner">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 120 140" role="img">
+        <defs>
+          <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a2f3a"/>
+            <stop offset="100%" stop-color="#161a21"/>
+          </linearGradient>
+          <linearGradient id="accGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffcf6b"/>
+            <stop offset="100%" stop-color="#ff8a3d"/>
+          </linearGradient>
+        </defs>
+        <!-- metronome body -->
+        <path d="M60 6 L104 128 a6 6 0 0 1-6 8 H22 a6 6 0 0 1-6-8 Z"
+              fill="url(#bodyGrad)" stroke="#39404e" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M60 20 L96 122 H24 Z" fill="#0e1116" opacity=".55"/>
+        <!-- scale ticks -->
+        <g stroke="#4a5262" stroke-width="2" stroke-linecap="round">
+          <line x1="52" y1="46" x2="68" y2="46"/>
+          <line x1="49" y1="64" x2="71" y2="64"/>
+          <line x1="46" y1="82" x2="74" y2="82"/>
+          <line x1="43" y1="100" x2="77" y2="100"/>
+        </g>
+        <!-- pendulum -->
+        <g class="mark__pendulum">
+          <line x1="60" y1="118" x2="60" y2="26" stroke="url(#accGrad)" stroke-width="5" stroke-linecap="round"/>
+          <rect x="49" y="52" width="22" height="13" rx="3" fill="url(#accGrad)"/>
+        </g>
+        <circle cx="60" cy="120" r="7" fill="#1d222b" stroke="#4a5262" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <h1 class="splash__title">Pulse</h1>
+    <p class="splash__tagline">A metronome that keeps up with your practice.</p>
+
+    <button id="startBtn" class="btn-start" type="button">Start playing</button>
+
+    <ul class="splash__features">
+      <li>Tap tempo &amp; precise scheduling</li>
+      <li>Subdivisions, accents &amp; time signatures</li>
+      <li>Tempo trainer + works offline</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────────── App shell (built out next) ───────────── -->
+<main id="app" class="app" hidden>
+  <p class="placeholder">Metronome loading…</p>
+</main>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>
