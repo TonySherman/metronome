@@ -64,3 +64,23 @@ A swipe-down bottom sheet (`#sheet`) holds everything that doesn't belong on the
 - **Reset all settings**.
 
 Sheet can be dismissed by the ✕, the scrim, `Esc`, or dragging the grab handle down 90 px.
+
+### Step 4 — Icons & offline (PWA)
+- Redrew `icons/icon.svg` (metronome mark with a warm amber pendulum) plus a `maskable`
+  variant with safe-zone padding for Android adaptive icons, and rasterised them to
+  192/512 px PNGs and a 180 px `apple-touch-icon.png`.
+- Bug fixed twice over: an SVG `linearGradient` in the default `objectBoundingBox` units
+  paints nothing on a perfectly vertical line (its bounding box has zero width), so the
+  pendulum rod and the tempo arc were invisible. Both now use `gradientUnits="userSpaceOnUse"`.
+- `manifest.webmanifest` — full icon set, `id`, categories, standalone/portrait.
+- `sw.js` — service worker: cache-first for the app shell, network-first for navigations
+  (so a new deploy is picked up), old caches cleaned on activate. The whole app is a
+  handful of KB, so it installs and runs offline immediately.
+- Install prompt: `beforeinstallprompt` is captured and surfaced as an "Install Pulse on
+  this device" button at the bottom of the settings sheet.
+
+**Note on image generation:** I intended to generate the icon with `gpt-image-2`, but this
+session's egress policy blocks `api.openai.com` (the agent proxy answers 403 to CONNECT),
+so the artwork is hand-authored SVG rasterised through headless Chromium instead. That is
+arguably the better outcome here: the icon is vector, matches the in-app mark exactly, and
+the whole icon set is ~50 KB.

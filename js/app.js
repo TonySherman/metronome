@@ -620,6 +620,37 @@
     sheetEl.awakeOn.checked = !!ui.keepAwake;
   }
 
+
+  /* ============================================================
+     PWA: offline cache + install prompt
+     ============================================================ */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  let installEvent = null;
+  const installBtn = $('installBtn');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installEvent = e;
+    if (installBtn) installBtn.hidden = false;
+  });
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!installEvent) return;
+      installEvent.prompt();
+      await installEvent.userChoice;
+      installEvent = null;
+      installBtn.hidden = true;
+    });
+  }
+  window.addEventListener('appinstalled', () => {
+    installEvent = null;
+    if (installBtn) installBtn.hidden = true;
+  });
+
   /* ---------- boot ---------- */
   renderTempo();
   renderBeats();

@@ -594,3 +594,15 @@ button { font-family: inherit; color: inherit; }
   cursor: pointer;
 }
 .reset-btn:active { background: rgba(255,107,107,.1); }
+
+.install-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 0;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
