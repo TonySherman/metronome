@@ -117,3 +117,19 @@ pendulum actually swings. `icons/icon.svg` (favicon + manifest SVG entry) was re
 - Verified timing in headless Chromium by logging every scheduled click: 120 BPM quarters
   land 0.500000 s apart, triplets 0.166667 s, swung eighths 0.3335/0.1665 (2:1), the trainer
   steps 240→250→260 on bar lines, count-in, silent bars and accent/mute all behave.
+
+### Step 7 — Fits on one screen, at any size
+The controls were falling below the fold on smaller phones (a metronome you have to scroll
+is a broken metronome), so sizing is now driven by the viewport *height* as well as width:
+- The dial is `min(300px, 74vw, 36dvh)`, the play/tap buttons and row paddings use
+  `clamp(..dvh..)`, and two portrait breakpoints (≤900 px and ≤720 px tall) tighten the
+  vertical rhythm further.
+- The BPM readout is sized in container-query units (`27cqi`) against the dial itself, so
+  three digits always sit inside the ring instead of overflowing on narrow screens; a
+  viewport-based `clamp()` stays as the fallback for older browsers.
+- The time-signature chips scroll horizontally (with a masked fade edge) instead of wrapping
+  to a second line.
+- Verified at 375×667, 393×851, 768×1024 and 844×390 landscape: no page scrolling on any of
+  them. Subdivision clicks now also blink the active beat dot.
+- Offline verified end-to-end: with the network cut, a reload still boots the full app from
+  the service-worker cache.

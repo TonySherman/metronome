@@ -400,7 +400,7 @@
   /* ---------- visual sync ---------- */
   let activeBeat = -1;
   function clearActiveBeats() {
-    el.beats.querySelectorAll('.beat.is-active').forEach((b) => b.classList.remove('is-active'));
+    el.beats.querySelectorAll('.beat').forEach((b) => b.classList.remove('is-active', 'is-sub'));
     activeBeat = -1;
   }
 
@@ -409,15 +409,15 @@
     const now = metro.ctx.currentTime;
     const due = metro.due(now);
     for (const e of due) {
-      if (e.tick !== 0) continue;
-      showBeat(e);
+      if (e.tick === 0) showBeat(e);
+      else showSubTick(e);
     }
     requestAnimationFrame(visualLoop);
   }
 
   function showBeat(e) {
     const dots = el.beats.children;
-    if (activeBeat >= 0 && dots[activeBeat]) dots[activeBeat].classList.remove('is-active');
+    if (activeBeat >= 0 && dots[activeBeat]) dots[activeBeat].classList.remove('is-active', 'is-sub');
     if (dots[e.beat]) dots[e.beat].classList.add('is-active');
     activeBeat = e.beat;
 
@@ -440,6 +440,14 @@
       }
       el.counter.classList.toggle('is-silent', e.silent);
     }
+  }
+
+  function showSubTick(e) {
+    const dot = el.beats.children[e.beat];
+    if (!dot || e.silent || !e.level) return;
+    dot.classList.remove('is-sub');
+    void dot.offsetWidth;
+    dot.classList.add('is-sub');
   }
 
   let flashEl = null;

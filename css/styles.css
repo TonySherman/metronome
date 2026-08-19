@@ -173,14 +173,13 @@ button { font-family: inherit; color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: clamp(6px, 1.4dvh, 14px);
   max-width: 520px;
   margin: 0 auto;
   padding: calc(10px + var(--safe-t)) 16px calc(18px + var(--safe-b));
   min-height: 100dvh;
   animation: rise .4s cubic-bezier(.2,.8,.3,1) both;
 }
-.pad { height: 4px; flex: 0 0 auto; }
 
 /* ---------- Top bar ---------- */
 .topbar {
@@ -228,7 +227,9 @@ button { font-family: inherit; color: inherit; }
 
 .dial {
   position: relative;
-  width: min(300px, 74vw);
+  /* scales with whichever runs out first: width or height */
+  width: min(300px, 74vw, 36dvh);
+  container-type: inline-size;
   aspect-ratio: 1;
   touch-action: none;
   cursor: grab;
@@ -276,7 +277,7 @@ button { font-family: inherit; color: inherit; }
   pointer-events: none;
 }
 .bpm {
-  font-size: clamp(56px, 19vw, 82px);
+  font-size: min(clamp(44px, 18vw, 78px), 13dvh); /* fallback */
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -285,10 +286,17 @@ button { font-family: inherit; color: inherit; }
 .bpm__unit { margin-top: 2px; font-size: 12px; letter-spacing: .22em; color: var(--muted); }
 .tempo-name { margin-top: 8px; font-size: 13px; color: var(--accent); font-style: italic; }
 
+/* Size the readout from the dial itself, so three digits always sit inside the ring. */
+@supports (container-type: inline-size) {
+  .bpm { font-size: 27cqi; }
+  .bpm__unit { font-size: 4.6cqi; margin-top: 1cqi; }
+  .tempo-name { font-size: 5.4cqi; margin-top: 3cqi; }
+}
+
 /* ---------- Nudge + slider ---------- */
 .nudge { width: 100%; display: flex; align-items: center; gap: 12px; }
 .nudge__btn {
-  width: 46px; height: 46px; flex: none;
+  width: clamp(40px, 6dvh, 46px); height: clamp(40px, 6dvh, 46px); flex: none;
   border-radius: 14px;
   font-size: 24px; font-weight: 700;
   background: var(--surface);
@@ -362,7 +370,8 @@ button { font-family: inherit; color: inherit; }
   padding: 4px 0;
 }
 .round-btn {
-  width: 74px; height: 74px;
+  width: clamp(56px, 8.8dvh, 74px);
+  height: clamp(56px, 8.8dvh, 74px);
   border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -377,7 +386,8 @@ button { font-family: inherit; color: inherit; }
 .round-btn[aria-pressed="false"] { opacity: .5; }
 
 .play-btn {
-  width: 104px; height: 104px;
+  width: clamp(80px, 12.5dvh, 104px);
+  height: clamp(80px, 12.5dvh, 104px);
   border-radius: 50%;
   border: 0;
   display: grid; place-items: center;
@@ -388,7 +398,7 @@ button { font-family: inherit; color: inherit; }
   transition: transform .1s ease, box-shadow .2s ease;
 }
 .play-btn:active { transform: scale(.95); }
-.play-btn__icon { width: 46px; height: 46px; grid-area: 1/1; }
+.play-btn__icon { width: 44%; height: 44%; grid-area: 1/1; }
 .play-btn__icon--stop { display: none; }
 .play-btn.is-playing .play-btn__icon--play { display: none; }
 .play-btn.is-playing .play-btn__icon--stop { display: block; }
@@ -400,12 +410,12 @@ button { font-family: inherit; color: inherit; }
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 6px 14px;
+  padding: clamp(2px, 0.6dvh, 6px) 14px;
   box-shadow: var(--shadow);
 }
 .row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 12px 0;
+  padding: clamp(7px, 1.3dvh, 12px) 0;
   border-bottom: 1px solid rgba(255,255,255,.05);
 }
 .row:last-child { border-bottom: 0; }
@@ -432,7 +442,7 @@ button { font-family: inherit; color: inherit; }
 .segmented { display: flex; gap: 6px; background: var(--surface-2); padding: 5px; border-radius: 14px; }
 .seg {
   flex: 1;
-  min-height: 46px;
+  min-height: clamp(38px, 5.6dvh, 46px);
   border: 0;
   border-radius: 10px;
   background: transparent;
@@ -612,9 +622,20 @@ button { font-family: inherit; color: inherit; }
 
 /* ---------- meter presets ---------- */
 .row--tight { padding-top: 4px; padding-bottom: 12px; }
-.chips--meter { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips--meter {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* fade the right edge so it reads as scrollable */
+  -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+}
+.chips--meter::-webkit-scrollbar { display: none; }
 .chip--sm {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   min-width: 52px;
   padding: 9px 6px;
   font-size: 13px;
@@ -645,7 +666,6 @@ button { font-family: inherit; color: inherit; }
   .round-btn { width: 58px; height: 58px; }
   .round-btn__main { font-size: 14px; }
   .chip--sm { padding: 7px 6px; }
-  .pad { display: none; }
   .hint { display: none; }
   .app { padding-top: calc(6px + var(--safe-t)); padding-bottom: calc(8px + var(--safe-b)); }
   .panel { padding: 2px 12px; }
@@ -663,9 +683,39 @@ button { font-family: inherit; color: inherit; }
   .dial { width: 320px; }
 }
 
+/* Keep the whole instrument on one screen: trim the vertical rhythm as the
+   viewport gets shorter, rather than letting the controls fall below the fold. */
+@media (max-height: 900px) and (orientation: portrait) {
+  .transport { padding: 0; }
+  .row { padding: clamp(6px, 1.1dvh, 10px) 0; }
+  .seg { min-height: clamp(36px, 5.2dvh, 44px); }
+  .beats-wrap { gap: 4px; }
+}
+@media (max-height: 720px) and (orientation: portrait) {
+  .hint { display: none; }
+  .dial { width: min(300px, 70vw, 30dvh); }
+  .beats { gap: 6px; }
+  .brand__name { font-size: 16px; }
+  .app { gap: 6px; }
+  .panel { padding: 0 12px; }
+  .row--stack { gap: 6px; }
+  .row__label { font-size: 13px; }
+}
+
 /* focus visibility for keyboard users */
 :focus-visible {
   outline: 2px solid var(--beat);
   outline-offset: 3px;
   border-radius: 8px;
+}
+
+/* subdivision ticks give the active beat a small extra blink */
+.beat.is-sub { animation: subTick .12s ease-out; }
+@keyframes subTick {
+  from { box-shadow: 0 0 0 0 rgba(110,231,255,.55); }
+  to   { box-shadow: 0 0 0 7px rgba(110,231,255,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beat.is-sub { animation: none; }
+  .dial__pulse.is-beat, .dial__pulse.is-accent { animation-duration: .001s; }
 }
