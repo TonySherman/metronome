@@ -166,6 +166,82 @@
   <div class="pad"></div>
 </main>
 
+
+<!-- ───────────── Settings / practice sheet ───────────── -->
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" hidden aria-label="Sound and practice settings">
+  <div class="sheet__grab" id="sheetGrab" aria-hidden="true"></div>
+  <header class="sheet__head">
+    <h2>Sound &amp; practice</h2>
+    <button class="sheet__close" id="sheetClose" type="button" aria-label="Close">✕</button>
+  </header>
+
+  <div class="sheet__body">
+
+    <h3 class="sheet__group">Click sound</h3>
+    <div class="chips" id="voiceChips" role="radiogroup" aria-label="Click sound"></div>
+
+    <div class="row">
+      <span class="row__label">Volume</span>
+      <input class="slider slider--inline" id="volSlider" type="range" min="0" max="100" step="1" aria-label="Volume">
+    </div>
+
+    <h3 class="sheet__group">Count-in</h3>
+    <div class="segmented" id="countInSeg" role="group" aria-label="Count-in bars">
+      <button class="seg is-on" data-count="0" type="button"><span class="seg__glyph">Off</span></button>
+      <button class="seg" data-count="1" type="button"><span class="seg__glyph">1</span><span class="seg__cap">bar</span></button>
+      <button class="seg" data-count="2" type="button"><span class="seg__glyph">2</span><span class="seg__cap">bars</span></button>
+    </div>
+
+    <h3 class="sheet__group">
+      Tempo trainer
+      <label class="switch"><input type="checkbox" id="trainerOn"><span class="switch__track"><span class="switch__thumb"></span></span></label>
+    </h3>
+    <p class="sheet__note">Speeds the click up (or down) automatically while you loop a passage.</p>
+    <div class="grid-2" id="trainerFields">
+      <label class="field"><span>Change by</span>
+        <span class="field__ctl"><button data-step="-1" data-target="trainerStep" type="button">−</button><b id="trainerStepVal">5</b><button data-step="1" data-target="trainerStep" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Every</span>
+        <span class="field__ctl"><button data-step="-1" data-target="trainerEvery" type="button">−</button><b id="trainerEveryVal">4</b><button data-step="1" data-target="trainerEvery" type="button">+</button></span>
+      </label>
+      <label class="field"><span id="trainerLimitLabel">Up to</span>
+        <span class="field__ctl"><button data-step="-5" data-target="trainerMax" type="button">−</button><b id="trainerMaxVal">200</b><button data-step="5" data-target="trainerMax" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Direction</span>
+        <span class="field__ctl field__ctl--single"><button id="trainerMode" type="button">Speed up</button></span>
+      </label>
+    </div>
+
+    <h3 class="sheet__group">
+      Silent bars
+      <label class="switch"><input type="checkbox" id="silentOn"><span class="switch__track"><span class="switch__thumb"></span></span></label>
+    </h3>
+    <p class="sheet__note">Drops the click for a few bars so you have to keep time yourself.</p>
+    <div class="grid-2">
+      <label class="field"><span>Play</span>
+        <span class="field__ctl"><button data-step="-1" data-target="playBars" type="button">−</button><b id="playBarsVal">4</b><button data-step="1" data-target="playBars" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Mute</span>
+        <span class="field__ctl"><button data-step="-1" data-target="muteBars" type="button">−</button><b id="muteBarsVal">1</b><button data-step="1" data-target="muteBars" type="button">+</button></span>
+      </label>
+    </div>
+
+    <h3 class="sheet__group">Feedback</h3>
+    <div class="toggles">
+      <label class="toggle-row"><span>Vibrate on beat</span>
+        <span class="switch"><input type="checkbox" id="vibrateOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+      <label class="toggle-row"><span>Flash screen on downbeat</span>
+        <span class="switch"><input type="checkbox" id="flashOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+      <label class="toggle-row"><span>Keep screen awake</span>
+        <span class="switch"><input type="checkbox" id="awakeOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" type="button">Reset all settings</button>
+    <p class="sheet__version">Pulse · works offline · add to your home screen</p>
+  </div>
+</section>
+
 <script src="js/audio.js" defer></script>
 <script src="js/app.js" defer></script>
 </body>

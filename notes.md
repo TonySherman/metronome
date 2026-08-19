@@ -50,3 +50,17 @@ Design decisions so far:
   `localStorage`, Italian tempo markings.
 - Fix: the tempo arc is set with `element.style.strokeDasharray`, not `setAttribute` — a
   CSS rule for the same property outranks a presentation attribute, so the arc never drew.
+
+### Step 3 — Sound & practice sheet
+A swipe-down bottom sheet (`#sheet`) holds everything that doesn't belong on the main screen:
+- **Click sound** — 8 voices as chips; tapping one previews it when the metronome is stopped.
+- **Volume** — smoothed with `setTargetAtTime` so it never clicks.
+- **Count-in** — off / 1 / 2 bars before the loop starts; the bar counter shows "in".
+- **Tempo trainer** — change by N BPM every M bars, up to a ceiling (or down to a floor when
+  reversed). Runs in the engine at bar boundaries and pushes the new tempo back to the dial.
+- **Silent bars** — play N bars, mute M bars, repeating; the bar counter turns cyan while muted
+  so you can still see where you are.
+- **Feedback** — vibrate on beat, screen flash on the downbeat, keep screen awake.
+- **Reset all settings**.
+
+Sheet can be dismissed by the ✕, the scrim, `Esc`, or dragging the grab handle down 90 px.

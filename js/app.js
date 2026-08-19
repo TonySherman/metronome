@@ -419,10 +419,212 @@
     setTimeout(() => { el.splash.style.display = 'none'; }, 450);
   });
 
+
+  /* ============================================================
+     Settings & practice sheet
+     ============================================================ */
+  const sheetEl = {
+    sheet: $('sheet'), scrim: $('scrim'), close: $('sheetClose'), grab: $('sheetGrab'),
+    voiceChips: $('voiceChips'), vol: $('volSlider'),
+    countInSeg: $('countInSeg'),
+    trainerOn: $('trainerOn'), trainerFields: $('trainerFields'),
+    trainerStepVal: $('trainerStepVal'), trainerEveryVal: $('trainerEveryVal'),
+    trainerMaxVal: $('trainerMaxVal'), trainerMode: $('trainerMode'),
+    trainerLimitLabel: $('trainerLimitLabel'),
+    silentOn: $('silentOn'), playBarsVal: $('playBarsVal'), muteBarsVal: $('muteBarsVal'),
+    vibrateOn: $('vibrateOn'), flashOn: $('flashOn'), awakeOn: $('awakeOn'),
+    resetBtn: $('resetBtn')
+  };
+
+  function openSheet() {
+    sheetEl.sheet.hidden = false;
+    sheetEl.scrim.hidden = false;
+    requestAnimationFrame(() => {
+      sheetEl.sheet.classList.add('is-open');
+      sheetEl.scrim.classList.add('is-open');
+    });
+  }
+  function closeSheet() {
+    sheetEl.sheet.classList.remove('is-open');
+    sheetEl.scrim.classList.remove('is-open');
+    setTimeout(() => { sheetEl.sheet.hidden = true; sheetEl.scrim.hidden = true; }, 320);
+  }
+  el.sheetBtn.addEventListener('click', openSheet);
+  sheetEl.close.addEventListener('click', closeSheet);
+  sheetEl.scrim.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheetEl.sheet.hidden) closeSheet(); });
+
+  /* swipe the sheet down to dismiss */
+  (function swipeToClose() {
+    let y0 = null;
+    const onDown = (e) => { y0 = e.clientY; sheetEl.sheet.style.transition = 'none'; };
+    const onMove = (e) => {
+      if (y0 == null) return;
+      const dy = Math.max(0, e.clientY - y0);
+      sheetEl.sheet.style.transform = `translateY(${dy}px)`;
+    };
+    const onUp = (e) => {
+      if (y0 == null) return;
+      const dy = Math.max(0, e.clientY - y0);
+      y0 = null;
+      sheetEl.sheet.style.transition = '';
+      sheetEl.sheet.style.transform = '';
+      if (dy > 90) closeSheet();
+    };
+    sheetEl.grab.addEventListener('pointerdown', (e) => { sheetEl.grab.setPointerCapture(e.pointerId); onDown(e); });
+    sheetEl.grab.addEventListener('pointermove', onMove);
+    sheetEl.grab.addEventListener('pointerup', onUp);
+    sheetEl.grab.addEventListener('pointercancel', onUp);
+  })();
+
+  /* --- sound picker --- */
+  (function buildVoices() {
+    const voices = window.Pulse.VOICES;
+    Object.keys(voices).forEach((key) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.dataset.voice = key;
+      b.textContent = voices[key].label;
+      b.setAttribute('role', 'radio');
+      sheetEl.voiceChips.appendChild(b);
+    });
+    sheetEl.voiceChips.addEventListener('click', (e) => {
+      const b = e.target.closest('.chip');
+      if (!b) return;
+      metro.voice = b.dataset.voice;
+      renderVoices();
+      if (!metro.running) metro.preview('accent');
+      haptic(8);
+      save();
+    });
+  })();
+
+  function renderVoices() {
+    sheetEl.voiceChips.querySelectorAll('.chip').forEach((c) => {
+      const on = c.dataset.voice === metro.voice;
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-checked', String(on));
+    });
+  }
+
+  /* --- volume --- */
+  sheetEl.vol.addEventListener('input', () => {
+    const v = +sheetEl.vol.value / 100;
+    metro.ensureContext();
+    metro.setVolume(v);
+    sheetEl.vol.style.setProperty('--fill', sheetEl.vol.value + '%');
+    save();
+  });
+
+  /* --- count-in --- */
+  sheetEl.countInSeg.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-count]');
+    if (!b) return;
+    metro.countIn = +b.dataset.count;
+    renderSheet();
+    save();
+  });
+
+  /* --- trainer + silent practice steppers --- */
+  const LIMITS = {
+    trainerStep: [1, 20], trainerEvery: [1, 32], trainerMax: [20, 300],
+    playBars: [1, 32], muteBars: [1, 32]
+  };
+  function bump(target, delta) {
+    const [lo, hi] = LIMITS[target];
+    const t = metro.trainer, sp = metro.silentPractice;
+    const get = { trainerStep: () => t.step, trainerEvery: () => t.everyBars, trainerMax: () => t.max,
+                  playBars: () => sp.playBars, muteBars: () => sp.muteBars };
+    const set = { trainerStep: (v) => t.step = v, trainerEvery: (v) => t.everyBars = v,
+                  trainerMax: (v) => t.max = v, playBars: (v) => sp.playBars = v, muteBars: (v) => sp.muteBars = v };
+    set[target](clamp(get[target]() + delta, lo, hi));
+    renderSheet();
+    save();
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-step][data-target]');
+    if (!b) return;
+    bump(b.dataset.target, +b.dataset.step);
+  });
+
+  sheetEl.trainerOn.addEventListener('change', () => {
+    metro.trainer.on = sheetEl.trainerOn.checked;
+    renderSheet(); save();
+  });
+  sheetEl.trainerMode.addEventListener('click', () => {
+    metro.trainer.mode = metro.trainer.mode === 'up' ? 'down' : 'up';
+    // flip the limit to a sensible default on the other side of the current tempo
+    metro.trainer.max = metro.trainer.mode === 'up'
+      ? clamp(Math.max(metro.bpm + 20, metro.trainer.max), 20, 300)
+      : clamp(Math.min(metro.bpm - 20, metro.trainer.max), 20, 300);
+    renderSheet(); save();
+  });
+  sheetEl.silentOn.addEventListener('change', () => {
+    metro.silentPractice.on = sheetEl.silentOn.checked;
+    renderSheet(); save();
+  });
+
+  /* --- feedback toggles --- */
+  sheetEl.vibrateOn.addEventListener('change', () => { ui.vibrate = sheetEl.vibrateOn.checked; save(); haptic(15); });
+  sheetEl.flashOn.addEventListener('change', () => { ui.flash = sheetEl.flashOn.checked; save(); });
+  sheetEl.awakeOn.addEventListener('change', () => {
+    ui.keepAwake = sheetEl.awakeOn.checked;
+    if (ui.keepAwake && metro.running) requestWakeLock(); else releaseWakeLock();
+    save();
+  });
+
+  sheetEl.resetBtn.addEventListener('click', () => {
+    if (!confirm('Reset tempo, meter, sounds and practice settings?')) return;
+    stop();
+    try { localStorage.removeItem(STORE_KEY); } catch (err) {}
+    ui = JSON.parse(JSON.stringify(defaults));
+    Object.assign(metro, {
+      bpm: defaults.bpm, beats: defaults.beats, noteValue: defaults.noteValue,
+      subdivision: defaults.subdivision, swing: defaults.swing,
+      accents: defaults.accents.slice(), voice: defaults.voice,
+      subdivisionsOn: defaults.subdivisionsOn, countIn: defaults.countIn
+    });
+    metro.trainer = Object.assign({}, defaults.trainer);
+    metro.silentPractice = Object.assign({}, defaults.silentPractice);
+    metro.setVolume(defaults.volume);
+    renderTempo(); renderBeats(); renderSub(); renderSheet();
+    save();
+  });
+
+  function renderSheet() {
+    renderVoices();
+    sheetEl.vol.value = Math.round(metro.volume * 100);
+    sheetEl.vol.style.setProperty('--fill', Math.round(metro.volume * 100) + '%');
+
+    sheetEl.countInSeg.querySelectorAll('[data-count]').forEach((b) => {
+      b.classList.toggle('is-on', +b.dataset.count === metro.countIn);
+    });
+
+    const t = metro.trainer;
+    sheetEl.trainerOn.checked = t.on;
+    sheetEl.trainerFields.classList.toggle('is-disabled', !t.on);
+    sheetEl.trainerStepVal.textContent = t.step;
+    sheetEl.trainerEveryVal.textContent = t.everyBars + (t.everyBars === 1 ? ' bar' : ' bars');
+    sheetEl.trainerMaxVal.textContent = t.max;
+    sheetEl.trainerMode.textContent = t.mode === 'up' ? 'Speed up' : 'Slow down';
+    sheetEl.trainerLimitLabel.textContent = t.mode === 'up' ? 'Up to' : 'Down to';
+
+    const sp = metro.silentPractice;
+    sheetEl.silentOn.checked = sp.on;
+    sheetEl.playBarsVal.textContent = sp.playBars;
+    sheetEl.muteBarsVal.textContent = sp.muteBars;
+
+    sheetEl.vibrateOn.checked = !!ui.vibrate;
+    sheetEl.flashOn.checked = !!ui.flash;
+    sheetEl.awakeOn.checked = !!ui.keepAwake;
+  }
+
   /* ---------- boot ---------- */
   renderTempo();
   renderBeats();
   renderSub();
+  renderSheet();
   updatePlayUI();
 
   window.__pulse = { metro, ui, save, renderBeats, renderSub, renderTempo, haptic, tempoName };
