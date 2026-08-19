@@ -152,6 +152,7 @@
     }
     el.beatsValue.textContent = metro.beats;
     el.noteValue.textContent = metro.noteValue;
+    if (typeof renderMeterChips === 'function') renderMeterChips();
     el.noteToggle.textContent = (NOTE_GLYPH[metro.noteValue] || '\u2669') + ' = beat';
   }
 
@@ -165,6 +166,7 @@
     metro.accents[i] = next;
     btn.dataset.level = next;
     btn.setAttribute('aria-label', `Beat ${i + 1}: ${['muted', 'normal', 'accented'][next]}`);
+    renderMeterChips();
     haptic(8);
     save();
   });
@@ -179,7 +181,16 @@
     if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
   }
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && metro.running) requestWakeLock();
+    if (document.visibilityState !== 'visible') return;
+    // iOS/Android suspend the audio clock in the background; pick it back up.
+    if (metro.ctx && metro.ctx.state === 'suspended') metro.ctx.resume().catch(() => {});
+    if (metro.running) {
+      requestWakeLock();
+      requestAnimationFrame(visualLoop);
+    }
+  });
+  window.addEventListener('pageshow', () => {
+    if (metro.ctx && metro.ctx.state === 'suspended' && metro.running) metro.ctx.resume().catch(() => {});
   });
 
   function updatePlayUI() {
@@ -311,6 +322,40 @@
     metro.noteValue = cycle[(cycle.indexOf(metro.noteValue) + 1) % cycle.length];
     renderBeats(); save();
   });
+
+
+  /* ---------- common meters ---------- */
+  const METERS = {
+    '2/4':  { beats: 2,  note: 4, accents: [2, 1] },
+    '3/4':  { beats: 3,  note: 4, accents: [2, 1, 1] },
+    '4/4':  { beats: 4,  note: 4, accents: [2, 1, 1, 1] },
+    '5/4':  { beats: 5,  note: 4, accents: [2, 1, 1, 2, 1] },
+    '6/8':  { beats: 6,  note: 8, accents: [2, 1, 1, 2, 1, 1] },
+    '7/8':  { beats: 7,  note: 8, accents: [2, 1, 1, 2, 1, 2, 1] },
+    '12/8': { beats: 12, note: 8, accents: [2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1] }
+  };
+  const meterPresets = $('meterPresets');
+  meterPresets.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-meter]');
+    if (!b) return;
+    const m = METERS[b.dataset.meter];
+    metro.beats = m.beats;
+    metro.noteValue = m.note;
+    metro.accents = m.accents.slice();
+    renderBeats();
+    renderMeterChips();
+    haptic(8);
+    save();
+  });
+  function renderMeterChips() {
+    const key = `${metro.beats}/${metro.noteValue}`;
+    meterPresets.querySelectorAll('[data-meter]').forEach((c) => {
+      const on = c.dataset.meter === key &&
+                 JSON.stringify(METERS[key].accents) === JSON.stringify(metro.accents);
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-pressed', String(on));
+    });
+  }
 
   /* ---------- subdivision + swing ---------- */
   const SUB_GLYPH = { 1: '♩', 2: '♫', 3: '♪³', 4: '♬' };
@@ -655,6 +700,7 @@
   renderTempo();
   renderBeats();
   renderSub();
+  renderMeterChips();
   renderSheet();
   updatePlayUI();
 

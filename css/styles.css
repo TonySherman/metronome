@@ -29,6 +29,9 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* `display` on a component would otherwise beat the hidden attribute */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
@@ -605,4 +608,64 @@ button { font-family: inherit; color: inherit; }
   background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
   font-size: 15px; font-weight: 700;
   cursor: pointer;
+}
+
+/* ---------- meter presets ---------- */
+.row--tight { padding-top: 4px; padding-bottom: 12px; }
+.chips--meter { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip--sm {
+  flex: 1 0 auto;
+  min-width: 52px;
+  padding: 9px 6px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Landscape / short viewports — two columns so the dial and the
+   controls both stay on screen without scrolling.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 620px) {
+  .app {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: 8px 20px;
+    max-width: 900px;
+    min-height: auto;
+  }
+  .topbar { grid-column: 1 / -1; }
+  .dial-wrap { grid-column: 1; grid-row: 2 / span 3; }
+  .dial { width: min(190px, 32vw); }
+  .bpm { font-size: clamp(38px, 9vh, 56px); }
+  .beats-wrap, .transport, .panel { grid-column: 2; }
+  .transport { gap: clamp(12px, 4vw, 24px); }
+  .play-btn { width: 76px; height: 76px; }
+  .play-btn__icon { width: 34px; height: 34px; }
+  .round-btn { width: 58px; height: 58px; }
+  .round-btn__main { font-size: 14px; }
+  .chip--sm { padding: 7px 6px; }
+  .pad { display: none; }
+  .hint { display: none; }
+  .app { padding-top: calc(6px + var(--safe-t)); padding-bottom: calc(8px + var(--safe-b)); }
+  .panel { padding: 2px 12px; }
+  .row { padding: 8px 0; }
+  .row--tight { padding-top: 2px; padding-bottom: 8px; }
+  .beat { --size: 30px !important; }
+  .nudge__btn { width: 40px; height: 40px; }
+  .seg { min-height: 40px; }
+  .sheet { max-height: 92dvh; }
+}
+
+/* larger phones / tablets (not the short-landscape layout above) */
+@media (min-width: 620px) and (min-height: 621px) {
+  .app { gap: 16px; }
+  .dial { width: 320px; }
+}
+
+/* focus visibility for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--beat);
+  outline-offset: 3px;
+  border-radius: 8px;
 }

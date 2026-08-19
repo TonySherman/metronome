@@ -96,3 +96,24 @@ The in-app artwork stays vector: the title-screen mark was redrawn to match the 
 icon's silhouette (rounded-top body, plinth, inner panel, amber pendulum) so the launcher
 icon and the splash read as the same object — but as SVG it stays crisp at any size and its
 pendulum actually swings. `icons/icon.svg` (favicon + manifest SVG entry) was redrawn to match.
+
+### Step 6 — Meters, landscape layout, robustness
+- **Common time signatures** as one-tap chips (2/4, 3/4, 4/4, 5/4, 6/8, 7/8, 12/8). Each
+  preset also loads a sensible accent pattern — 6/8 accents beats 1 and 4, 12/8 accents
+  1/4/7/10, 7/8 gives the 2+2+3 grouping — and the chip highlights only while the meter
+  *and* the accent pattern still match, so hand-edited accents are visible as "custom".
+- **Landscape / short viewports**: the app becomes two columns (dial on the left, beats,
+  transport and controls on the right) and now fits a 844×390 phone in landscape with no
+  scrolling — useful when the phone is on a music stand.
+- **Bug: `hidden` was being ignored.** `.app` and `.sheet` set `display: flex`, which
+  outranks the `hidden` attribute's UA `display: none` — the settings sheet was actually
+  rendered (just off behind other content) before it was ever opened. Added a global
+  `[hidden] { display: none !important }`.
+- **Bug: media-query ordering.** The `min-width: 620px` tablet rule was overriding the
+  short-landscape dial size; it is now also gated on `min-height`.
+- **Backgrounding:** mobile browsers suspend the audio clock when the app leaves the
+  foreground, so `visibilitychange`/`pageshow` resume the context, re-arm the wake lock and
+  restart the animation loop.
+- Verified timing in headless Chromium by logging every scheduled click: 120 BPM quarters
+  land 0.500000 s apart, triplets 0.166667 s, swung eighths 0.3335/0.1665 (2:1), the trainer
+  steps 240→250→260 on bar lines, count-in, silent bars and accent/mute all behave.
