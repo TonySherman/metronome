@@ -136,7 +136,6 @@
     // keep the accent array in step with the meter
     while (metro.accents.length < metro.beats) metro.accents.push(1);
     metro.accents.length = metro.beats;
-    metro.accents[0] = metro.accents[0] === 0 ? 0 : metro.accents[0];
 
     const size = metro.beats > 9 ? 28 : metro.beats > 6 ? 32 : 38;
     for (let i = 0; i < metro.beats; i++) {

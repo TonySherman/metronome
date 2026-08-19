@@ -208,8 +208,10 @@
       if (this.master) this.master.gain.setTargetAtTime(v, this.ctx.currentTime, 0.01);
     }
 
-    /* seconds for one beat; `noteValue` rescales so 6/8 at 120 clicks
-       eighth notes, 2/2 at 60 clicks half notes, etc. */
+    /* The tempo counts the note in the lower half of the time signature, the way
+       hardware metronomes do: 6/8 at 120 clicks eighth notes, 2/2 at 60 clicks
+       half notes. So one beat is always 60/bpm seconds and `noteValue` is purely
+       how the meter is written. */
     get secondsPerBeat() { return 60 / this.bpm; }
 
     /* length of subdivision `i` inside a beat, honouring swing */
