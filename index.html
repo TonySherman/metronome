@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Pulse — Metronome</title>
+<meta name="description" content="A clean, accurate metronome for practicing music. Tap tempo, subdivisions, accents and a tempo trainer.">
+<meta name="theme-color" content="#0d0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pulse">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ───────────── Title screen ───────────── -->
+<section id="splash" class="splash" aria-label="Welcome">
+  <div class="splash__glow" aria-hidden="true"></div>
+
+  <div class="splash__inner">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 120 150" role="img">
+        <defs>
+          <linearGradient id="bodyGrad" gradientUnits="userSpaceOnUse" x1="20" y1="10" x2="100" y2="140">
+            <stop offset="0%" stop-color="#39414f"/>
+            <stop offset="100%" stop-color="#222932"/>
+          </linearGradient>
+          <linearGradient id="accGrad" gradientUnits="userSpaceOnUse" x1="44" y1="20" x2="80" y2="120">
+            <stop offset="0%" stop-color="#ffd685"/>
+            <stop offset="100%" stop-color="#ff7a2f"/>
+          </linearGradient>
+        </defs>
+        <!-- body -->
+        <path d="M53 14 Q60 5 67 14 L98 116 H22 Z" fill="url(#bodyGrad)"/>
+        <rect x="15" y="114" width="90" height="20" rx="7" fill="#2c333f"/>
+        <rect x="24" y="132" width="14" height="7" rx="3" fill="#1a1f27"/>
+        <rect x="82" y="132" width="14" height="7" rx="3" fill="#1a1f27"/>
+        <!-- inner panel -->
+        <path d="M56 26 Q60 20 64 26 L88 110 H32 Z" fill="#12161c"/>
+        <!-- scale -->
+        <g stroke="#5b6579" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+          <line x1="54" y1="40" x2="62" y2="40"/>
+          <line x1="53" y1="50" x2="61" y2="50"/>
+          <line x1="52" y1="60" x2="62" y2="60"/>
+          <line x1="51" y1="70" x2="61" y2="70"/>
+          <line x1="50" y1="80" x2="62" y2="80"/>
+          <line x1="49" y1="90" x2="61" y2="90"/>
+          <line x1="48" y1="100" x2="62" y2="100"/>
+        </g>
+        <!-- pendulum -->
+        <g class="mark__pendulum">
+          <line x1="60" y1="112" x2="60" y2="22" stroke="url(#accGrad)" stroke-width="4.5" stroke-linecap="round"/>
+          <rect x="50" y="46" width="20" height="12" rx="3.5" fill="url(#accGrad)"/>
+        </g>
+      </svg>
+    </div>
+
+    <h1 class="splash__title">Pulse</h1>
+    <p class="splash__tagline">A metronome that keeps up with your practice.</p>
+
+    <button id="startBtn" class="btn-start" type="button">Start playing</button>
+
+    <ul class="splash__features">
+      <li>Tap tempo &amp; precise scheduling</li>
+      <li>Subdivisions, accents &amp; time signatures</li>
+      <li>Tempo trainer + works offline</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────────── App ───────────── -->
+<main id="app" class="app" hidden>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__dot" aria-hidden="true"></span>
+      <span class="brand__name">Pulse</span>
+    </div>
+    <div class="counter" id="counter" aria-live="off">
+      <span class="counter__label">Bar</span>
+      <span class="counter__value" id="barCount">–</span>
+    </div>
+    <button class="icon-btn" id="sheetBtn" type="button" aria-label="Sound &amp; practice settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h4M12 12h8M4 17h8M16 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="16" cy="7" r="2.4" fill="currentColor"/><circle cx="10" cy="12" r="2.4" fill="currentColor"/><circle cx="14" cy="17" r="2.4" fill="currentColor"/></svg>
+    </button>
+  </header>
+
+  <!-- Tempo dial -->
+  <section class="dial-wrap">
+    <div class="dial" id="dial" role="slider" tabindex="0"
+         aria-label="Tempo in beats per minute" aria-valuemin="20" aria-valuemax="300" aria-valuenow="100">
+      <svg class="dial__svg" viewBox="0 0 240 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="arcGrad" gradientUnits="userSpaceOnUse" x1="22" y1="30" x2="215" y2="215">
+            <stop offset="0%" stop-color="#ffcf6b"/>
+            <stop offset="100%" stop-color="#ff8a3d"/>
+          </linearGradient>
+        </defs>
+        <g id="dialTicks" class="dial__ticks"></g>
+        <circle class="dial__track" cx="120" cy="120" r="98"/>
+        <circle class="dial__arc" id="dialArc" cx="120" cy="120" r="98"/>
+        <circle class="dial__knob" id="dialKnob" cx="120" cy="22" r="7"/>
+      </svg>
+      <div class="dial__pulse" id="dialPulse" aria-hidden="true"></div>
+      <div class="dial__center">
+        <div class="bpm" id="bpmValue">100</div>
+        <div class="bpm__unit">BPM</div>
+        <div class="tempo-name" id="tempoName">Andante</div>
+      </div>
+    </div>
+
+    <div class="nudge">
+      <button class="nudge__btn" id="bpmDown" type="button" aria-label="Decrease tempo">−</button>
+      <input class="slider" id="bpmSlider" type="range" min="20" max="300" step="1" value="100" aria-label="Tempo slider">
+      <button class="nudge__btn" id="bpmUp" type="button" aria-label="Increase tempo">+</button>
+    </div>
+  </section>
+
+  <!-- Beats: tap a dot to cycle accent → normal → mute -->
+  <section class="beats-wrap">
+    <div class="beats" id="beats" aria-label="Beats in the bar. Tap a beat to change its accent."></div>
+    <p class="hint" id="beatHint">Tap a beat to accent or mute it</p>
+  </section>
+
+  <!-- Transport -->
+  <section class="transport">
+    <button class="round-btn" id="tapBtn" type="button">
+      <span class="round-btn__main">TAP</span>
+      <span class="round-btn__sub" id="tapSub">tempo</span>
+    </button>
+
+    <button class="play-btn" id="playBtn" type="button" aria-label="Start metronome">
+      <svg class="play-btn__icon play-btn__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+      <svg class="play-btn__icon play-btn__icon--stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>
+    </button>
+
+    <button class="round-btn" id="subBtn" type="button" aria-pressed="true">
+      <span class="round-btn__main" id="subGlyph">♩</span>
+      <span class="round-btn__sub">subdiv</span>
+    </button>
+  </section>
+
+  <!-- Meter + subdivision -->
+  <section class="panel">
+    <div class="row">
+      <span class="row__label">Time signature</span>
+      <div class="stepper" id="meterStepper">
+        <button class="stepper__btn" id="beatsDown" type="button" aria-label="Fewer beats per bar">−</button>
+        <span class="stepper__value"><span id="beatsValue">4</span><span class="stepper__slash">/</span><span id="noteValue">4</span></span>
+        <button class="stepper__btn" id="beatsUp" type="button" aria-label="More beats per bar">+</button>
+        <button class="stepper__note" id="noteToggle" type="button" aria-label="Change note value">♩=beat</button>
+      </div>
+    </div>
+
+    <div class="row row--stack row--tight">
+      <div class="chips chips--meter" id="meterPresets" role="group" aria-label="Common time signatures">
+        <button class="chip chip--sm" data-meter="2/4" type="button">2/4</button>
+        <button class="chip chip--sm" data-meter="3/4" type="button">3/4</button>
+        <button class="chip chip--sm" data-meter="4/4" type="button">4/4</button>
+        <button class="chip chip--sm" data-meter="5/4" type="button">5/4</button>
+        <button class="chip chip--sm" data-meter="6/8" type="button">6/8</button>
+        <button class="chip chip--sm" data-meter="7/8" type="button">7/8</button>
+        <button class="chip chip--sm" data-meter="12/8" type="button">12/8</button>
+      </div>
+    </div>
+
+    <div class="row row--stack">
+      <span class="row__label">Subdivision</span>
+      <div class="segmented" id="subSeg" role="group" aria-label="Subdivision">
+        <button data-sub="1" class="seg is-on" type="button"><span class="seg__glyph">♩</span><span class="seg__cap">1</span></button>
+        <button data-sub="2" class="seg" type="button"><span class="seg__glyph">♫</span><span class="seg__cap">2</span></button>
+        <button data-sub="3" class="seg" type="button"><span class="seg__glyph">♪♪♪</span><span class="seg__cap">3</span></button>
+        <button data-sub="4" class="seg" type="button"><span class="seg__glyph">♬</span><span class="seg__cap">4</span></button>
+        <button data-swing="1" id="swingBtn" class="seg seg--wide" type="button"><span class="seg__glyph">swing</span><span class="seg__cap" id="swingCap">off</span></button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ───────────── Settings / practice sheet ───────────── -->
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" hidden aria-label="Sound and practice settings">
+  <div class="sheet__grab" id="sheetGrab" aria-hidden="true"></div>
+  <header class="sheet__head">
+    <h2>Sound &amp; practice</h2>
+    <button class="sheet__close" id="sheetClose" type="button" aria-label="Close">✕</button>
+  </header>
+
+  <div class="sheet__body">
+
+    <h3 class="sheet__group">Click sound</h3>
+    <div class="chips" id="voiceChips" role="radiogroup" aria-label="Click sound"></div>
+
+    <div class="row">
+      <span class="row__label">Volume</span>
+      <input class="slider slider--inline" id="volSlider" type="range" min="0" max="100" step="1" aria-label="Volume">
+    </div>
+
+    <h3 class="sheet__group">Count-in</h3>
+    <div class="segmented" id="countInSeg" role="group" aria-label="Count-in bars">
+      <button class="seg is-on" data-count="0" type="button"><span class="seg__glyph">Off</span></button>
+      <button class="seg" data-count="1" type="button"><span class="seg__glyph">1</span><span class="seg__cap">bar</span></button>
+      <button class="seg" data-count="2" type="button"><span class="seg__glyph">2</span><span class="seg__cap">bars</span></button>
+    </div>
+
+    <h3 class="sheet__group">
+      Tempo trainer
+      <label class="switch"><input type="checkbox" id="trainerOn"><span class="switch__track"><span class="switch__thumb"></span></span></label>
+    </h3>
+    <p class="sheet__note">Speeds the click up (or down) automatically while you loop a passage.</p>
+    <div class="grid-2" id="trainerFields">
+      <label class="field"><span>Change by</span>
+        <span class="field__ctl"><button data-step="-1" data-target="trainerStep" type="button">−</button><b id="trainerStepVal">5</b><button data-step="1" data-target="trainerStep" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Every</span>
+        <span class="field__ctl"><button data-step="-1" data-target="trainerEvery" type="button">−</button><b id="trainerEveryVal">4</b><button data-step="1" data-target="trainerEvery" type="button">+</button></span>
+      </label>
+      <label class="field"><span id="trainerLimitLabel">Up to</span>
+        <span class="field__ctl"><button data-step="-5" data-target="trainerMax" type="button">−</button><b id="trainerMaxVal">200</b><button data-step="5" data-target="trainerMax" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Direction</span>
+        <span class="field__ctl field__ctl--single"><button id="trainerMode" type="button">Speed up</button></span>
+      </label>
+    </div>
+
+    <h3 class="sheet__group">
+      Silent bars
+      <label class="switch"><input type="checkbox" id="silentOn"><span class="switch__track"><span class="switch__thumb"></span></span></label>
+    </h3>
+    <p class="sheet__note">Drops the click for a few bars so you have to keep time yourself.</p>
+    <div class="grid-2">
+      <label class="field"><span>Play</span>
+        <span class="field__ctl"><button data-step="-1" data-target="playBars" type="button">−</button><b id="playBarsVal">4</b><button data-step="1" data-target="playBars" type="button">+</button></span>
+      </label>
+      <label class="field"><span>Mute</span>
+        <span class="field__ctl"><button data-step="-1" data-target="muteBars" type="button">−</button><b id="muteBarsVal">1</b><button data-step="1" data-target="muteBars" type="button">+</button></span>
+      </label>
+    </div>
+
+    <h3 class="sheet__group">Feedback</h3>
+    <div class="toggles">
+      <label class="toggle-row"><span>Vibrate on beat</span>
+        <span class="switch"><input type="checkbox" id="vibrateOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+      <label class="toggle-row"><span>Flash screen on downbeat</span>
+        <span class="switch"><input type="checkbox" id="flashOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+      <label class="toggle-row"><span>Keep screen awake</span>
+        <span class="switch"><input type="checkbox" id="awakeOn"><span class="switch__track"><span class="switch__thumb"></span></span></span></label>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" type="button">Reset all settings</button>
+    <button class="install-btn" id="installBtn" type="button" hidden>Install Pulse on this device</button>
+    <p class="sheet__version">Pulse · works offline · add to your home screen</p>
+  </div>
+</section>
+
+<script src="js/audio.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
